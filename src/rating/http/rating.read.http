@@ -1,1 +1,5 @@
+## GET All Ratings
 GET /rating
+
+## Get Rating by ID
+GET /rating/6

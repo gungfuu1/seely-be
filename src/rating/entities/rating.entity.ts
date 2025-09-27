@@ -7,6 +7,6 @@ export class Rating {
 
   @Column()
   name: string;
-    @Column()
+    @Column({ nullable: true })
     description: string;
 }

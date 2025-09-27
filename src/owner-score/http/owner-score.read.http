@@ -1,0 +1,5 @@
+## GET All Owner Scores
+GET /owner-score
+
+## Get Owner Score by ID
+GET /owner-score/3
