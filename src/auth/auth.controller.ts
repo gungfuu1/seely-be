@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Redirect, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
@@ -11,6 +11,17 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly keycloakService: KeycloakService) {}
+
+  @Get('login')
+  @Redirect('https://docs.nestjs.com', 302)
+  getLoginInfo(@Req() req: Request) {
+    const idToken = req.cookies?.idToken
+    const client_id = process.env.OAUTH2_CLIENT_ID
+    const redirect_uri = encodeURI(process.env.OAUTH2_REDIRECT_URI|| "" )
+    const url = "https://sso-dev.odd.works/realms/pea-devpool-2025/protocol/openid-connect/auth?client_id="+client_id+"&scope=openid%20email%20profile&response_type=code&redirect_uri=" + redirect_uri
+    //redirect to keycloak login with url
+    return { url, statusCode: 302 };
+  }
 
   @Post('login')
   async login(

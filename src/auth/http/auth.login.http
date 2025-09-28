@@ -24,3 +24,7 @@ Content-Type: application/json
     "username": "sl002",
     "password": "WRONG_PASS"
 }
+
+### case: GET login 
+GET /auth/login
+Content-Type: application/json
