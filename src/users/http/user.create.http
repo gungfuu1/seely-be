@@ -1,8 +1,49 @@
+### case: sl001
 POST /users
 Content-Type: application/json
 
 {
     "username": "sl001",
+    "password": "abc1234",
+    "role": "USER"
+}
+
+### case: sl002
+POST /users
+Content-Type: application/json
+
+{
+    "username": "sl002",
+    "password": "abc1234",
+    "role": "USER"
+}
+
+### case: sl003
+POST /users
+Content-Type: application/json
+
+{
+    "username": "sl003",
+    "password": "abc1234",
+    "role": "USER"
+}
+
+### case: sl004
+POST /users
+Content-Type: application/json
+
+{
+    "username": "sl004",
+    "password": "abc1234",
+    "role": "USER"
+}
+
+### case: sl005
+POST /users
+Content-Type: application/json
+
+{
+    "username": "sl005",
     "password": "abc1234",
     "role": "USER"
 }
