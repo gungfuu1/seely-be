@@ -3,28 +3,42 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private repository: Repository<User>) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly repository: Repository<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
-    // 10 = hash password 2^10 = 1024 rounds
+    // create hash
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
-    const user = { ...createUserDto, password: hashedPassword };
+    // replace hashed to password
+    const user = {
+      ...createUserDto,
+      password: hashedPassword,
+    };
 
-    const savedUser = await this.repository.save(user);
-
-    const { password, ...userWithoutPassword } = savedUser;
-
-    return userWithoutPassword;
+    // save new user with hashed password
+    return this.repository.save(user);
   }
 
-  async findByUsername(username: string) {
+  findByUsername(username: string) {
     return this.repository.findOneByOrFail({ username });
   }
 
+  async upsertByKeycloakId(username: string, keycloakId: string): Promise<User> {
+    const result = await this.repository.upsert(
+      { username, keycloakId },
+      {
+        conflictPaths: ['keycloakId'],
+      },
+    );
+    console.log('upset', result);
+
+    return this.repository.findOneByOrFail({ keycloakId });
+  }
 }

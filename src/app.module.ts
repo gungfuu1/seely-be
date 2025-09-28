@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './auth/auth.module';
+import { ConfigifyModule } from '@itgorillaz/configify';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
         synchronize: true,
       }),
     }),
+    ConfigifyModule.forRootAsync(),
     RatingModule,
     OwnerScoreModule,
     UsersModule,
