@@ -10,6 +10,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './auth/auth.module';
 import { ConfigifyModule } from '@itgorillaz/configify';
+import { ItemSeriesModule } from './item-series/item-series.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ConfigifyModule } from '@itgorillaz/configify';
     OwnerScoreModule,
     UsersModule,
     AuthModule,
+    ItemSeriesModule,
   ],
   controllers: [AppController],
   providers: [
