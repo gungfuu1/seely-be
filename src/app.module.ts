@@ -5,6 +5,9 @@ import { RatingModule } from './rating/rating.module';
 import { dataSourceOpts } from './data-source';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OwnerScoreModule } from './owner-score/owner-score.module';
+import { UsersModule } from './users/users.module';
+import { APP_PIPE } from '@nestjs/core';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 @Module({
   imports: [
@@ -17,8 +20,15 @@ import { OwnerScoreModule } from './owner-score/owner-score.module';
     }),
     RatingModule,
     OwnerScoreModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+    provide: APP_PIPE,
+    useClass: ZodValidationPipe,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
