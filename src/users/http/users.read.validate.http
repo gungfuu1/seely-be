@@ -1,0 +1,28 @@
+### case valid token
+GET /users/sl002
+Authorization: Bearer VALID_TOKEN
+
+
+### case no token
+### no login = 401
+GET /users/sl002
+
+
+### case invalid token
+### logged in but token not valid = 403 
+GET /users/sl002
+Authorization: Bearer INVALID_TOKEN
+
+### case: login
+# @name sl002
+POST /auth/login
+Content-Type: application/json
+{
+  "username": "sl002",
+  "password": "abc1234"
+}
+
+### case: valid token
+# @ref sl002
+GET /users/me
+Authorization: Bearer {{sl002.accessToken}}
