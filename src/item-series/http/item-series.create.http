@@ -18,7 +18,7 @@ Content-Type: application/json
   "name": "Inception",
   "year": 2010,
   "description": "A thief who enters the dreams of others to steal secrets from their subconscious is given a chance to have his past crimes forgiven if he can plant an idea into a target’s mind.",
-  "image_url": "https://example.com/images/inception.jpg",
+  "imageUrl": "https://example.com/images/inception.jpg",
   "rating_id": 3,
   "ownerscore_id": 7
 }

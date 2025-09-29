@@ -1,11 +1,11 @@
 ### case valid token
-GET /users/sl002
+GET /users/me/
 Authorization: Bearer VALID_TOKEN
 
 
 ### case no token
 ### no login = 401
-GET /users/sl002
+GET /users/me
 
 
 ### case invalid token

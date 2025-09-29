@@ -1,0 +1,37 @@
+// item-seriess.delete.http
+### auth login
+# @name sl003
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "username": "sl003",
+    "password": "abc1234"
+}
+
+### create success
+# @ref sl003
+# @name itemSeriesCreated
+POST http://localhost:3000/api/v1/item-series
+Authorization: Bearer {{sl003.accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Inception",
+  "year": 2010,
+  "description": "A thief who enters the dreams of others to steal secrets from their subconscious is given a chance to have his past crimes forgiven if he can plant an idea into a target’s mind.",
+  "imageUrl": "https://foodish-api.com/images/pasta/pasta16.jpg",
+  "rating": {
+    "id": 3
+  },
+  "ownerScore": {
+    "id": 7
+  }
+}
+
+### delete
+# @ref sl003
+# @ref itemSeriesCreated
+DELETE http://localhost:3000/api/v1/item-series/{{itemSeriesCreated.id}}
+Authorization: Bearer {{sl003.accessToken}}
+Content-Type: application/json

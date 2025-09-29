@@ -1,0 +1,42 @@
+// item-series.update.validate.http
+### login
+# @name sl003
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "username": "sl003",
+    "password": "abc1234"
+}
+
+### case: update success
+# @ref sl003
+PATCH http://localhost:3000/api/v1/item-series/2
+Authorization: Bearer {{sl003.accessToken}}
+Content-Type: application/json
+
+{
+  "imageUrl": "https://example.com/images/got2.jpg"
+}
+
+### case: invalid url format
+# @ref sl003
+PATCH http://localhost:3000/api/v1/item-series/2
+Authorization: Bearer {{sl003.accessToken}}
+Content-Type: application/json
+
+{
+    "name": "Games of Thone 2",
+    "imageUrl": "https://example.com/images/got2.jpg"
+}
+
+### case: invalid path variable type
+# @ref sl003
+PATCH http://localhost:3000/api/v1/item-series/2
+Authorization: Bearer {{sl003.accessToken}}
+Content-Type: application/json
+
+{
+    "name": "Games of Thone 2",
+    "imageUrl": "https://example.com/images/got2.jpg"
+}

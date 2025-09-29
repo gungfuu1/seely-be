@@ -1,0 +1,20 @@
+### login
+# @name sl003
+### case: login success
+POST /auth/login
+Content-Type: application/json
+
+{
+    "username": "sl003",
+    "password": "abc1234"
+}
+
+### update success
+# @ref sl003
+PATCH /item-series/2
+Authorization: Bearer {{sl003.accessToken}}
+Content-Type: application/json
+
+{
+  "imageUrl": "https://example.com/images/got2.jpg"
+}

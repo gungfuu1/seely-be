@@ -25,15 +25,17 @@ export class ItemSeries {
   description: string;
 
   @ManyToOne(() => Rating)
-@JoinColumn({ name: 'rating_id' })
+@JoinColumn({ name: 'rating_id', 
+  referencedColumnName: 'id' })
 rating: Rating;
 
 @ManyToOne(() => OwnerScore)
-@JoinColumn({ name: 'ownerscore_id' })
-ownerscore: OwnerScore;
+@JoinColumn({ name: 'ownerscore_id', 
+  referencedColumnName: 'id' })
+ownerScore: OwnerScore;
 
-  @Column({ name: 'image_url', nullable: true })
-  image_url: string;
+  @Column({ name: 'image_url' })
+  imageUrl: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'username', referencedColumnName: 'username' })
