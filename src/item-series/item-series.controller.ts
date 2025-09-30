@@ -13,8 +13,7 @@ import { AvgrDto } from './dto/avgr.dto';
 
 @Controller('item-series')
 export class ItemSeriesController {
-  [x: string]: any;
-  constructor(
+    constructor(
     private readonly itemSeriesService: ItemSeriesService,
     private readonly avgrService: AvgrService,) {}
 
