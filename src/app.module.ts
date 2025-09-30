@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RatingModule } from './rating/rating.module';
@@ -11,6 +11,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './auth/auth.module';
 import { ConfigifyModule } from '@itgorillaz/configify';
 import { ItemSeriesModule } from './item-series/item-series.module';
+import { LoginLoggerMiddleware } from './middlewares/login-logger.middleware';
 
 @Module({
   imports: [
@@ -37,4 +38,13 @@ import { ItemSeriesModule } from './item-series/item-series.module';
     AppService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule { // Add implements & config consumer
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoginLoggerMiddleware)
+      .forRoutes(
+        { path: '*auth/login', method: RequestMethod.POST },
+        { path: '*keycloak/login', method: RequestMethod.GET }
+      );
+  }
+}
