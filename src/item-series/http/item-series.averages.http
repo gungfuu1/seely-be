@@ -1,0 +1,44 @@
+  ### sl002 login
+  # @name sl002
+  POST http://localhost:3000/api/v1/auth/login
+  Content-Type: application/json
+  
+  {
+      "username": "sl002",
+      "password": "abc1234"
+  }
+  
+  ### case: sl002 averages
+  # @ref sl002
+  PUT http://localhost:3000/api/v1/item-series/6/avgr
+  Authorization: Bearer {{sl002.accessToken}}
+  Content-Type: application/json
+
+  {
+    "score": 3
+  }
+  
+  
+  ### sl003 login
+  # @name sl004
+  POST http://localhost:3000/api/v1/auth/login
+  Content-Type: application/json
+  
+  {
+      "username": "sl004",
+      "password": "abc1234"
+  }
+  
+  ### case: sl004 rating
+  # @ref sl004
+  PUT  http://localhost:3000/api/v1/item-series/6/avgr
+  Authorization: Bearer {{sl004.accessToken}}
+  Content-Type: application/json
+  
+  {
+    "score": 5
+  }
+  
+  
+  ### case: view item-series 6
+  GET  http://localhost:3000/api/v1/item-series/6
