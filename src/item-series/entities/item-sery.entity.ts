@@ -25,7 +25,7 @@ export class ItemSeries {
   description: string;
 
   @ManyToOne(() => Rating)
-@JoinColumn({ name: 'rating_id', 
+@JoinColumn({ name: 'rating', 
   referencedColumnName: 'id' })
 rating: Rating;
 

@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode } from '@nestjs/common';
 
-import { ItemSeriesService } from './item-series.service';
+import { ItemSeriesService, paginateConfig } from './item-series.service';
 import { CreateItemSeryDto } from './dto/create-item-sery.dto';
 import { UpdateItemSeryDto } from './dto/update-item-sery.dto';
-import { Auth } from '@app/auth/entities/auth.entity';
+import { ApiPaginationQuery, Paginate, PaginateQuery } from 'nestjs-paginate';
 import { AuthGuard } from '@nestjs/passport';
 import { LoggedInDto } from '@app/auth/dto/logged-in.dto';
 import { idDto } from '@app/common/dto/id.dto';
@@ -22,9 +22,10 @@ export class ItemSeriesController {
     (createItemSeryDto, req.user);
   }
 
+  @ApiPaginationQuery(paginateConfig)
   @Get()
-  findAll() {
-    return this.itemSeriesService.findAll();
+  search(@Paginate() query: PaginateQuery) {
+    return this.itemSeriesService.search(query);
   }
 
   @Get(':id')
@@ -48,4 +49,6 @@ export class ItemSeriesController {
   remove(@Param() idDto: idDto, @Req() req: { user: LoggedInDto }) {
     return this.itemSeriesService.remove(idDto.id, req.user);
   }
+
+  
 }
