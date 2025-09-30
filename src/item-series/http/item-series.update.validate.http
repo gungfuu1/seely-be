@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ### case: invalid path variable type
 # @ref sl003
-PATCH http://localhost:3000/api/v1/item-series/2
+PATCH http://localhost:3000/api/v1/item-series/A
 Authorization: Bearer {{sl003.accessToken}}
 Content-Type: application/json
 
