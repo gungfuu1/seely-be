@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { updateGlobalConfig } from 'nestjs-paginate';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppExceptionFilter } from './app-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,12 +39,18 @@ async function bootstrap() {
     .addSecurityRequirements('accessToken')
     .build();
     
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+
   // Swagger setup
-  SwaggerModule.setup('api', app, SwaggerModule.createDocument(app, config), {
+  SwaggerModule.setup('api', app, documentFactory, {
     swaggerOptions: {
       persistAuthorization: true,
     },
   });
+
+  // add app-excpetion.filter
+  const { httpAdapter } = app.get(HttpAdapterHost)
+  app.useGlobalFilters(new AppExceptionFilter(httpAdapter))
 
   await app.listen(process.env.PORT ?? 3000);
 }

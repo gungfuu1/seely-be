@@ -1,0 +1,29 @@
+### create - no username
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+    "password": "abc1234",
+    "role": "USER"
+}
+
+### create - blank username
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+    "username": "",
+    "password": "changeit",
+    "role": "USER"
+}
+
+
+### create sl001
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+    "username": "sl001",
+    "password": "abc1234",
+    "role": "USER"
+}
