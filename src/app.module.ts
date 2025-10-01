@@ -19,7 +19,7 @@ import { LoginLoggerMiddleware } from './middlewares/login-logger.middleware';
       useFactory: () => ({
         ...dataSourceOpts,
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
       }),
     }),
     ConfigifyModule.forRootAsync(),

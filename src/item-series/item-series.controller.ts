@@ -6,7 +6,7 @@ import { UpdateItemSeryDto } from './dto/update-item-sery.dto';
 import { ApiPaginationQuery, Paginate, PaginateQuery } from 'nestjs-paginate';
 import { AuthGuard } from '@nestjs/passport';
 import { LoggedInDto } from '@app/auth/dto/logged-in.dto';
-import { idDto } from '@app/common/dto/id.dto';
+import { IdDto } from '@app/common/dto/id.dto';
 import { AvgrDto } from './dto/avgr.dto';
 
 
@@ -33,14 +33,14 @@ export class ItemSeriesController {
   }
 
   @Get(':id')
-  findOne(@Param() idDto: idDto) {
+  findOne(@Param() idDto: IdDto) {
     return this.itemSeriesService.findOne(idDto.id);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   update(
-    @Param() idDto: idDto, 
+    @Param() idDto: IdDto, 
     @Body() updateItemSeryDto: UpdateItemSeryDto,
     @Req() req: { user: LoggedInDto }) {
     return this.itemSeriesService.update(
@@ -52,14 +52,14 @@ export class ItemSeriesController {
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  remove(@Param() idDto: idDto, @Req() req: { user: LoggedInDto }) {
+  remove(@Param() idDto: IdDto, @Req() req: { user: LoggedInDto }) {
     return this.itemSeriesService.remove(idDto.id, req.user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Put(':id/avgr')
   async avgr(
-  @Param() idDto: idDto,
+  @Param() idDto: IdDto,
   @Body() avgrDto: AvgrDto,
   @Req() req: { user: LoggedInDto },
 ) {

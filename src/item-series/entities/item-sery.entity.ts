@@ -1,4 +1,3 @@
-
 import { OwnerScore } from '@app/owner-score/entities/owner-score.entity';
 import { Rating } from '@app/rating/entities/rating.entity';
 import { User } from '@app/users/entities/user.entity';
@@ -25,14 +24,12 @@ export class ItemSeries {
   description: string;
 
   @ManyToOne(() => Rating)
-@JoinColumn({ name: 'rating', 
-  referencedColumnName: 'id' })
-rating: Rating;
+  @JoinColumn({ name: 'rating', referencedColumnName: 'id' })
+  rating: Rating;
 
-@ManyToOne(() => OwnerScore)
-@JoinColumn({ name: 'ownerscore_id', 
-  referencedColumnName: 'id' })
-ownerScore: OwnerScore;
+  @ManyToOne(() => OwnerScore)
+  @JoinColumn({ name: 'ownerscore_id', referencedColumnName: 'id' })
+  ownerScore: OwnerScore;
 
   @Column({ name: 'image_url' })
   imageUrl: string;
