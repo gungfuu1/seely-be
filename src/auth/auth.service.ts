@@ -53,4 +53,43 @@ export class AuthService {
     return { accessToken }
   }
 
+
+  // ========== Keycloak Flow ==========
+  async exchangeCodeForToken(code: string) {
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('client_id', process.env.OAUTH2_CLIENT_ID || '');
+    params.append('client_secret', process.env.OAUTH2_CLIENT_SECRET || '');
+    params.append('code', code);
+    params.append('redirect_uri', process.env.OAUTH2_REDIRECT_URI || '');
+
+    const res = await fetch(
+      `${process.env.OAUTH2_ISSUER}/protocol/openid-connect/token`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params,
+      },
+    );
+
+    if (!res.ok) {
+      throw new UnauthorizedException('Failed to exchange code for token');
+    }
+    return res.json();
+  }
+
+  async getUserFromToken(accessToken: string) {
+    const res = await fetch(
+      `${process.env.OAUTH2_ISSUER}/protocol/openid-connect/userinfo`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
+
+    if (!res.ok) {
+      throw new UnauthorizedException('Failed to fetch user info');
+    }
+    return res.json();
+  }
+
 }

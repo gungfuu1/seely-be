@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Redirect, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Redirect, Req, Res, UseGuards, Query, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
@@ -58,4 +58,40 @@ export class AuthController {
     return { logoutUrl: null }
   }
 
+
+  // =============== Keycloak Login ===============
+  @Get('login/keycloak')
+  @Redirect()
+  keycloakLogin() {
+    const client_id = process.env.OAUTH2_CLIENT_ID;
+    const redirect_uri = encodeURI(process.env.OAUTH2_REDIRECT_URI || '');
+    const url =
+      `${process.env.OAUTH2_ISSUER}/protocol/openid-connect/auth?` +
+      `client_id=${client_id}&scope=openid%20email%20profile&response_type=code&redirect_uri=${redirect_uri}`;
+    return { url, statusCode: 302 };
+  }
+
+  // =============== Keycloak Callback ===============
+  @Get('callback/keycloak')
+  async keycloakCallback(@Query('code') code: string, @Res() res: Response) {
+    if (!code) {
+      throw new UnauthorizedException('Missing code from Keycloak');
+    }
+
+    // แลก code เป็น token
+    const tokenResponse = await this.authService.exchangeCodeForToken(code);
+
+    // ดึง user info จาก token
+    const userInfo = await this.authService.getUserFromToken(
+      tokenResponse.access_token,
+    );
+
+    // TODO: จะบันทึก user ลง DB หรือเช็ค existing user ก็ทำตรงนี้
+    // เช่น call UsersService.createOrUpdate(userInfo)
+
+    // redirect กลับไป FE พร้อม query params
+    return res.redirect(
+      `http://localhost:4200?token=${tokenResponse.access_token}&user=${encodeURIComponent(userInfo.preferred_username)}`,
+    );
+  }
 }
