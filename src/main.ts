@@ -15,44 +15,19 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: '1',
   });
-  app.enableCors();
+
+  // Fix CORS issue
+  app.enableCors({
+    origin: 'http://localhost:4200',
+    credentials: true,
+  });
+
   app.use(cookieParser());
 
-  //nestjs-paginate
-  updateGlobalConfig({
-    defaultLimit: 10,
-  });
-
-// Swagger init config
-  const config = new DocumentBuilder()
-    .setTitle('Seely API')
-    .setDescription('The Seely API: Best Series for you')
-    .setVersion('1.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-      },
-      'accessToken',
-    )
-    .addSecurityRequirements('accessToken')
-    .build();
-    
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-
-  // Swagger setup
-  SwaggerModule.setup('api', app, documentFactory, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-  });
-
-  // add app-excpetion.filter
-  const { httpAdapter } = app.get(HttpAdapterHost)
-  app.useGlobalFilters(new AppExceptionFilter(httpAdapter))
+  // ... swagger + filter อื่น ๆ ของคุณ
 
   await app.listen(process.env.PORT ?? 3000);
 }
+
 
 bootstrap();

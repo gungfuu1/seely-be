@@ -1,39 +1,25 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
-import { KeycloakService } from './keycloak.service';
-import { Request, Response } from 'express';
+import { Controller, Get, Query, Res, UnauthorizedException } from '@nestjs/common';
+import { Response } from 'express';
+import { AuthService } from './auth.service';
 
-@Controller('keycloak')
+@Controller('auth/callback') // 👈 ต้องใส่ prefix ให้ตรง
 export class KeycloakController {
-  constructor(private readonly keycloakService: KeycloakService) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Get('redirect-to-login')
-  async redirectToLogin(@Res({ passthrough: true }) res: Response) {
-    const { state, codeVerifier, url } =
-      await this.keycloakService.getRedirectLoginUrl();
-    res.cookie('state', state);
-    res.cookie('codeVerifier', codeVerifier);
-    return { url };
-  }
+  @Get('keycloak')
+  async keycloakCallback(@Query('code') code: string, @Res() res: Response) {
+    if (!code) {
+      throw new UnauthorizedException('Missing code from Keycloak');
+    }
 
-  @Get('login')
-  async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const tokenResponse = await this.authService.exchangeCodeForToken(code);
+    const userInfo = await this.authService.getUserFromToken(tokenResponse.access_token);
+    const tokens = await this.authService.handleKeycloakLogin(userInfo);
 
-    const state = req.cookies?.state;
-    const codeVerifier = req.cookies?.codeVerifier;
-    const url = req.originalUrl.split('?')[1] || '';
-
-    const { idToken, tokensDto } = await this.keycloakService.login({
-      state,
-      codeVerifier,
-      url,
-    });
-
-    res.cookie('idToken', idToken, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 1000 * 60 * 5 })
-    res.cookie('refreshToken', tokensDto.refreshToken)
-
-    res.clearCookie('state')
-    res.clearCookie('codeVerifier')
-
-    return { accessToken: tokensDto.accessToken };
+    return res.redirect(
+      `http://localhost:4200/login?token=${tokens.accessToken}&user=${encodeURIComponent(
+        userInfo.preferred_username,
+      )}`,
+    );
   }
 }

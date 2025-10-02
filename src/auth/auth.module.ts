@@ -5,7 +5,6 @@ import { UsersModule } from '@app/users/users.module';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
-import { KeycloakController } from './keycloak.controller';
 import { KeycloakService } from './keycloak.service';
 
 @Module({
@@ -23,7 +22,7 @@ import { KeycloakService } from './keycloak.service';
     }),
     UsersModule,
   ],
-  controllers: [AuthController, KeycloakController],
+  controllers: [AuthController],
   providers: [AuthService, JwtStrategy, RefreshJwtStrategy, KeycloakService],
 })
 export class AuthModule {}

@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Post, Redirect, Req, Res, UseGuards, Query, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Redirect,
+  Req,
+  Res,
+  UseGuards,
+  Query,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
@@ -10,88 +21,83 @@ import { KeycloakService } from './keycloak.service';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly keycloakService: KeycloakService) {}
+    private readonly keycloakService: KeycloakService,
+  ) {}
 
-  @Get('login')
-  @Redirect('https://docs.nestjs.com', 302)
-  getLoginInfo(@Req() req: Request) {
-    const idToken = req.cookies?.idToken
-    const client_id = process.env.OAUTH2_CLIENT_ID
-    const redirect_uri = encodeURI(process.env.OAUTH2_REDIRECT_URI|| "" )
-    const url = "https://sso-dev.odd.works/realms/pea-devpool-2025/protocol/openid-connect/auth?client_id="+client_id+"&scope=openid%20email%20profile&response_type=code&redirect_uri=" + redirect_uri
-    //redirect to keycloak login with url
-    return { url, statusCode: 302 };
-  }
-
+  // ================= Local Login =================
   @Post('login')
   async login(
     @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) res: Response
+    @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken } = await this.authService.login(loginDto);
+    const { accessToken, refreshToken } =
+      await this.authService.login(loginDto);
 
-    res.cookie('refreshToken', refreshToken)
-    
-    return { accessToken }
+    res.cookie('refreshToken', refreshToken);
+    return { accessToken };
   }
 
   @UseGuards(AuthGuard('refresh-jwt'))
   @Post('refresh-token')
-  refreshToken(@Req() req: { user: LoggedInDto}) {
-    // return new accessToken
-    return this.authService.refreshToken(req.user)
+  refreshToken(@Req() req: { user: LoggedInDto }) {
+    return this.authService.refreshToken(req.user);
   }
-  
+
+  // ================= Logout (Local + Keycloak) =================
   @Post('logout')
-  async logout(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response) {
+  logout(@Res({ passthrough: true }) res: Response) {
+    // ลบ cookie ฝั่ง BE
     res.clearCookie('refreshToken');
+    res.clearCookie('idToken');
 
-    const idToken = req.cookies?.idToken
-    if (idToken) {
-      const logoutUrl = await this.keycloakService.logout(idToken)
-      res.clearCookie('idToken')
-      return { logoutUrl }
-    }
-
-    return { logoutUrl: null }
+    // ส่ง URL กลับไปให้ FE ใช้ redirect
+    return {
+      logoutUrl:
+        process.env.OAUTH2_POST_LOGOUT_REDIRECT_URI || 'http://localhost:4200/',
+    };
   }
 
-
-  // =============== Keycloak Login ===============
+  // ================= Keycloak Login =================
   @Get('login/keycloak')
   @Redirect()
   keycloakLogin() {
     const client_id = process.env.OAUTH2_CLIENT_ID;
-    const redirect_uri = encodeURI(process.env.OAUTH2_REDIRECT_URI || '');
+    const redirect_uri = encodeURIComponent(
+      process.env.OAUTH2_REDIRECT_URI || '',
+    );
+    const scope = process.env.OAUTH2_SCOPE || 'openid email profile';
+
+    // 👇 บังคับ Keycloak ให้ถามรหัสใหม่ทุกครั้ง
     const url =
       `${process.env.OAUTH2_ISSUER}/protocol/openid-connect/auth?` +
-      `client_id=${client_id}&scope=openid%20email%20profile&response_type=code&redirect_uri=${redirect_uri}`;
+      `client_id=${client_id}&scope=${scope}&response_type=code&redirect_uri=${redirect_uri}&prompt=login`;
+
     return { url, statusCode: 302 };
   }
 
-  // =============== Keycloak Callback ===============
+  // ================= Keycloak Callback =================
   @Get('callback/keycloak')
-  async keycloakCallback(@Query('code') code: string, @Res() res: Response) {
+  @Redirect()
+  async keycloakCallback(@Query('code') code: string) {
     if (!code) {
       throw new UnauthorizedException('Missing code from Keycloak');
     }
 
-    // แลก code เป็น token
+    // แลก code → token
     const tokenResponse = await this.authService.exchangeCodeForToken(code);
-
-    // ดึง user info จาก token
     const userInfo = await this.authService.getUserFromToken(
       tokenResponse.access_token,
     );
 
-    // TODO: จะบันทึก user ลง DB หรือเช็ค existing user ก็ทำตรงนี้
-    // เช่น call UsersService.createOrUpdate(userInfo)
+    // บันทึก user ลง DB
+    const user = await this.authService.saveUserFromKeycloak(userInfo);
 
-    // redirect กลับไป FE พร้อม query params
-    return res.redirect(
-      `http://localhost:4200?token=${tokenResponse.access_token}&user=${encodeURIComponent(userInfo.preferred_username)}`,
-    );
+    // redirect กลับไป FE พร้อม token + user
+    return {
+      url: `http://localhost:4200?token=${tokenResponse.access_token}&firstName=${encodeURIComponent(
+        userInfo.given_name || userInfo.preferred_username,
+      )}`,
+      statusCode: 302,
+    };
   }
 }

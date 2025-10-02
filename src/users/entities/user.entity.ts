@@ -16,10 +16,12 @@ export class User {
   })
   username: string;
 
-  @Column({
-    nullable: true
-  })
-  password: string;
+  @Column({ nullable: true })
+password?: string;
+
+  @Column({ nullable: true })
+  email: string;
+
 
   @Column({
     nullable: false,
@@ -29,4 +31,12 @@ export class User {
 
   @Column({ name: 'keycloak_id', unique: true, nullable: true })
   keycloakId: string;
+
+  @Column({ name: 'first_name', nullable: true })
+  firstName: string;
+
+  @Column({ name: 'last_name', nullable: true })
+  lastName: string;
+
+  
 }

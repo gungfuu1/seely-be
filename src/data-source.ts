@@ -8,8 +8,8 @@ export const dataSourceOpts: DataSourceOptions = {
   logging: true,
   url: process.env.DATABASE_URL,
   synchronize: false,
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/migrations/*{.ts,.js}'],
+  entities: ["dist/**/*.entity.js"], 
+  migrations: ["dist/migrations/*.js"],
 }
 
 export const AppDataSource = new DataSource(dataSourceOpts);

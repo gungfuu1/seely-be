@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -12,22 +11,27 @@ export class UsersService {
     private readonly repository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    // create hash
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+  async create(createUserDto: Partial<User>) {
+    // ถ้าเป็น user ปกติ → hash password
+    let password = createUserDto.password;
+    if (password) {
+      password = await bcrypt.hash(password, 10);
+    }
 
-    // replace hashed to password
     const user = {
       ...createUserDto,
-      password: hashedPassword,
+      password,
     };
 
-    // save new user with hashed password
     return this.repository.save(user);
   }
 
   findByUsername(username: string) {
     return this.repository.findOneByOrFail({ username });
+  }
+
+  async findByKeycloakId(keycloakId: string) {
+    return this.repository.findOne({ where: { keycloakId } });
   }
 
   async upsertByKeycloakId(username: string, keycloakId: string): Promise<User> {
@@ -37,8 +41,13 @@ export class UsersService {
         conflictPaths: ['keycloakId'],
       },
     );
-    console.log('upset', result);
+    console.log('upsert', result);
 
     return this.repository.findOneByOrFail({ keycloakId });
+  }
+
+  async update(id: number, updateData: Partial<User>) {
+    await this.repository.update(id, updateData);
+    return this.repository.findOneByOrFail({ id });
   }
 }

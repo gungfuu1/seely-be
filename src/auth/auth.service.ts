@@ -5,6 +5,7 @@ import { TokensDto } from './dto/tokens.dto';
 import bcrypt from 'bcrypt';
 import { LoggedInDto } from './dto/logged-in.dto';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { Role } from '@app/users/entities/user.entity'; 
 
 @Injectable()
 export class AuthService {
@@ -13,18 +14,21 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  // ========== Local Login ==========
   async login(loginDto: LoginDto): Promise<TokensDto> {
-    // find by username
     const user = await this.usersService.findByUsername(loginDto.username);
 
-    // compare hashed-password
-    const matched = await bcrypt.compare(loginDto.password, user.password);
+    if (!user) {
+      throw new UnauthorizedException(`user not found: ${loginDto.username}`);
+    }
+
+    const matched = await bcrypt.compare(loginDto.password, user.password ?? '');
     if (!matched) {
       throw new UnauthorizedException(
         `wrong password: username=${loginDto.username}`,
       );
     }
-    // return token
+
     const loggedInDto: LoggedInDto = {
       username: user.username,
       role: user.role,
@@ -34,10 +38,8 @@ export class AuthService {
   }
 
   generateTokens(loggedInDto: LoggedInDto): TokensDto {
-    // gen accessToken
     const accessToken = this.jwtService.sign(loggedInDto);
 
-    // gen refreshToken
     const refreshTokenOpts: JwtSignOptions = {
       secret: process.env.REFRESH_JWT_SECRET,
       expiresIn: process.env.REFRESH_JWT_EXPIRES_IN,
@@ -47,12 +49,10 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  refreshToken(loggedInDto: LoggedInDto): { accessToken: string} {
-    console.log('loggedInDto', loggedInDto)
+  refreshToken(loggedInDto: LoggedInDto): { accessToken: string } {
     const accessToken = this.jwtService.sign(loggedInDto);
-    return { accessToken }
+    return { accessToken };
   }
-
 
   // ========== Keycloak Flow ==========
   async exchangeCodeForToken(code: string) {
@@ -92,4 +92,70 @@ export class AuthService {
     return res.json();
   }
 
+  // ========= Handle Keycloak Login =========
+  async handleKeycloakLogin(userInfo: any): Promise<TokensDto> {
+    let user = await this.usersService.findByUsername(
+      userInfo.preferred_username,
+    );
+
+    if (!user) {
+      user = await this.usersService.create({
+        username: userInfo.preferred_username,
+        keycloakId: userInfo.sub,
+        email: userInfo.email,
+        firstName: userInfo.given_name || '',
+        lastName: userInfo.family_name || '',
+        role: Role.USER,
+        password: '', // แก้จาก null → ''
+      } as any);
+    } else {
+      user = await this.usersService.update(user.id, {
+        keycloakId: userInfo.sub,
+        email: userInfo.email,
+        firstName: userInfo.given_name || '',
+        lastName: userInfo.family_name || '',
+      });
+    }
+
+    if (!user) {
+      throw new UnauthorizedException('Failed to create or update user');
+    }
+
+    const loggedInDto: LoggedInDto = {
+      username: user.username,
+      role: user.role,
+    };
+
+    return this.generateTokens(loggedInDto);
+  }
+
+  // ========= Save User From Keycloak =========
+  async saveUserFromKeycloak(userInfo: any) {
+    const username = userInfo.preferred_username;
+    const keycloakId = userInfo.sub;
+
+    let user = await this.usersService
+      .findByKeycloakId(keycloakId)
+      .catch(() => null);
+
+    if (!user) {
+      user = await this.usersService.create({
+        username,
+        keycloakId,
+        email: userInfo.email || null,
+        firstName: userInfo.given_name || null,
+        lastName: userInfo.family_name || null,
+        role: Role.USER,
+        password: '', // แก้จาก null → ''
+      });
+    } else {
+      // update กรณีข้อมูลเปลี่ยน
+      user.email = userInfo.email || user.email;
+      user.firstName = userInfo.given_name || user.firstName;
+      user.lastName = userInfo.family_name || user.lastName;
+      await this.usersService.update(user.id, user);
+    }
+
+    return user;
+  }
 }
