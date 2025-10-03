@@ -8,12 +8,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: `${process.env.JWT_SECRET}`,
+      ignoreExpiration: false,
+      secretOrKey: process.env.JWT_SECRET || 'default-secret', // ต้องตรงกับตอน sign
     });
   }
 
-  validate(user: LoggedInDto): LoggedInDto {
-    // not special validate just jwt
-    return user;
+  async validate(payload: any): Promise<LoggedInDto> {
+    console.log('JWT Payload:', payload); // ✅ debug ดู payload
+    return { username: payload.username, role: payload.role };
   }
 }

@@ -5,7 +5,7 @@ import { TokensDto } from './dto/tokens.dto';
 import bcrypt from 'bcrypt';
 import { LoggedInDto } from './dto/logged-in.dto';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { Role } from '@app/users/entities/user.entity'; 
+import { Role } from '@app/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -38,11 +38,16 @@ export class AuthService {
   }
 
   generateTokens(loggedInDto: LoggedInDto): TokensDto {
-    const accessToken = this.jwtService.sign(loggedInDto);
+    // gen accessToken (HS256)
+    const accessToken = this.jwtService.sign(loggedInDto, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
 
+    // gen refreshToken (HS256)
     const refreshTokenOpts: JwtSignOptions = {
       secret: process.env.REFRESH_JWT_SECRET,
-      expiresIn: process.env.REFRESH_JWT_EXPIRES_IN,
+      expiresIn: process.env.REFRESH_JWT_EXPIRES_IN || '7d',
     };
     const refreshToken = this.jwtService.sign(loggedInDto, refreshTokenOpts);
 
@@ -50,7 +55,10 @@ export class AuthService {
   }
 
   refreshToken(loggedInDto: LoggedInDto): { accessToken: string } {
-    const accessToken = this.jwtService.sign(loggedInDto);
+    const accessToken = this.jwtService.sign(loggedInDto, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
     return { accessToken };
   }
 
@@ -106,7 +114,7 @@ export class AuthService {
         firstName: userInfo.given_name || '',
         lastName: userInfo.family_name || '',
         role: Role.USER,
-        password: '', // แก้จาก null → ''
+        password: '', // dummy password
       } as any);
     } else {
       user = await this.usersService.update(user.id, {
@@ -126,6 +134,7 @@ export class AuthService {
       role: user.role,
     };
 
+    // 🔑 ออก internal JWT (HS256)
     return this.generateTokens(loggedInDto);
   }
 
@@ -146,10 +155,9 @@ export class AuthService {
         firstName: userInfo.given_name || null,
         lastName: userInfo.family_name || null,
         role: Role.USER,
-        password: '', // แก้จาก null → ''
+        password: '', // dummy password
       });
     } else {
-      // update กรณีข้อมูลเปลี่ยน
       user.email = userInfo.email || user.email;
       user.firstName = userInfo.given_name || user.firstName;
       user.lastName = userInfo.family_name || user.lastName;
@@ -157,5 +165,14 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  // ========= Generate Internal Token หลัง Keycloak =========
+  async generateInternalToken(userInfo: any): Promise<TokensDto> {
+    const loggedInDto: LoggedInDto = {
+      username: userInfo.preferred_username,
+      role: Role.USER,
+    };
+    return this.generateTokens(loggedInDto);
   }
 }

@@ -7,7 +7,7 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -17,8 +17,8 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(PasswordRemoverInterceptor)
   @Get('me')
-  findByUsername(@Req() req: { user: LoggedInDto }) {
-    return this.usersService.findByUsername(req.user.username)
+  async findByUsername(@Req() req: any) {
+    console.log('req.user from JwtStrategy:', req.user);
+    return this.usersService.findByUsername(req.user.username);
   }
-
 }
