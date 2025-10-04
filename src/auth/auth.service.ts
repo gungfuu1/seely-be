@@ -30,24 +30,27 @@ export class AuthService {
     }
 
     const loggedInDto: LoggedInDto = {
+      id: user.id,                 // ✅ เพิ่ม id
       username: user.username,
       role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
     };
 
     return this.generateTokens(loggedInDto);
   }
 
+  // ========== JWT Generate ==========
   generateTokens(loggedInDto: LoggedInDto): TokensDto {
-    // gen accessToken (HS256)
     const accessToken = this.jwtService.sign(loggedInDto, {
       secret: process.env.JWT_SECRET,
-      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+      expiresIn: process.env.JWT_EXPIRES_IN || '10m',
     });
 
-    // gen refreshToken (HS256)
     const refreshTokenOpts: JwtSignOptions = {
       secret: process.env.REFRESH_JWT_SECRET,
-      expiresIn: process.env.REFRESH_JWT_EXPIRES_IN || '7d',
+      expiresIn: process.env.REFRESH_JWT_EXPIRES_IN || '30m',
     };
     const refreshToken = this.jwtService.sign(loggedInDto, refreshTokenOpts);
 
@@ -57,7 +60,7 @@ export class AuthService {
   refreshToken(loggedInDto: LoggedInDto): { accessToken: string } {
     const accessToken = this.jwtService.sign(loggedInDto, {
       secret: process.env.JWT_SECRET,
-      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+      expiresIn: process.env.JWT_EXPIRES_IN || '10m',
     });
     return { accessToken };
   }
@@ -130,11 +133,14 @@ export class AuthService {
     }
 
     const loggedInDto: LoggedInDto = {
+      id: user.id,                 // ✅ เพิ่ม id
       username: user.username,
       role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
     };
 
-    // 🔑 ออก internal JWT (HS256)
     return this.generateTokens(loggedInDto);
   }
 
@@ -169,10 +175,21 @@ export class AuthService {
 
   // ========= Generate Internal Token หลัง Keycloak =========
   async generateInternalToken(userInfo: any): Promise<TokensDto> {
+    const user = await this.usersService.findByUsername(userInfo.preferred_username);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
     const loggedInDto: LoggedInDto = {
-      username: userInfo.preferred_username,
-      role: Role.USER,
+      id: user.id,                 // ✅ ใช้ id จาก DB
+      username: user.username,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
     };
+
     return this.generateTokens(loggedInDto);
   }
 }

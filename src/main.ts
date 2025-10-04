@@ -18,12 +18,12 @@ async function bootstrap() {
   app.enableCors({ origin: 'http://localhost:4200', credentials: true });
   app.use(cookieParser());
 
-  // 📌 nestjs-paginate config
+  // paginate config
   updateGlobalConfig({
     defaultLimit: 10,
   });
 
-  // 📌 Swagger config
+  //  Swagger
   const config = new DocumentBuilder()
     .setTitle('Seely API')
     .setDescription('The Seely API: Best Series for you')
@@ -47,7 +47,7 @@ async function bootstrap() {
     },
   });
 
-  // 📌 add global exception filter
+  //  add global exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AppExceptionFilter(httpAdapter));
 

@@ -1,73 +1,162 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ItemSeries } from './entities/item-sery.entity';
 import { CreateItemSeryDto } from './dto/create-item-sery.dto';
 import { UpdateItemSeryDto } from './dto/update-item-sery.dto';
-import { ItemSeries } from './entities/item-sery.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { paginate, PaginateQuery, PaginateConfig } from 'nestjs-paginate';
-
-export const paginateConfig: PaginateConfig<ItemSeries> = {
-  sortableColumns: ['id', 'name', 'avg_rating', 'rating_count'],
-  searchableColumns: ['name', 'year', 'description'],
-};
+import { LoggedInDto } from '@app/auth/dto/logged-in.dto';
+import { Average } from '../averages/entities/average.entity';
 
 @Injectable()
 export class ItemSeriesService {
   constructor(
-    @InjectRepository(ItemSeries) private repository: Repository<ItemSeries>,
+    @InjectRepository(ItemSeries)
+    private readonly itemSeriesRepo: Repository<ItemSeries>,
+
+    @InjectRepository(Average)
+    private readonly averageRepo: Repository<Average>,
   ) {}
 
-  // ✅ ตอนนี้รับ username ตรงๆ
-  create(createItemSeryDto: CreateItemSeryDto, username: string) {
-    return this.repository.save({
-      ...createItemSeryDto,
-      user: { username },
+  // ✅ CREATE
+  async create(dto: CreateItemSeryDto, user: LoggedInDto) {
+    const series = this.itemSeriesRepo.create({
+      name: dto.name,
+      year: dto.year,
+      description: dto.description,
+      imageUrl: dto.imageUrl,
+      rating: dto.ratingId ? ({ id: dto.ratingId } as any) : undefined,
+      ownerScore: dto.ownerScoreId ? ({ id: dto.ownerScoreId } as any) : undefined,
+      user: { id: user.id } as any,
     });
+
+    return this.itemSeriesRepo.save(series);
   }
 
-  private queryTemplate() {
-    return this.repository
-      .createQueryBuilder('itemSeries')
-      .leftJoinAndSelect('itemSeries.rating', 'rating')
-      .leftJoinAndSelect('itemSeries.ownerScore', 'ownerScore')
-      .leftJoin('itemSeries.user', 'user')
-      .addSelect(['user.id', 'user.username', 'user.role']);
-  }
+  // ✅ PAGINATE
+  async paginate(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
 
-  async search(query: PaginateQuery) {
-    const page = await paginate<ItemSeries>(
-      query,
-      this.queryTemplate(),
-      paginateConfig,
-    );
+    const [data, total] = await this.itemSeriesRepo.findAndCount({
+      select: [
+        'id',
+        'name',
+        'year',
+        'description',
+        'imageUrl',
+        'avg_rating',
+        'rating_count',
+      ],
+      relations: ['rating', 'ownerScore', 'user'],
+      take: limit,
+      skip,
+      order: { id: 'ASC' },
+    });
+
+    const result = data.map((item) => ({
+      ...item,
+      user: item.user ? { username: item.user.username } : null,
+    }));
 
     return {
-      data: page.data,
-      meta: page.meta,
+      data: result,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
+        limit,
+      },
     };
   }
 
-  findOne(id: number) {
-    return this.queryTemplate()
-      .where('itemSeries.id = :id', { id })
-      .getOne();
+  // ✅ FIND ONE
+  async findOne(id: number) {
+    const series = await this.itemSeriesRepo.findOne({
+      where: { id },
+      relations: ['rating', 'ownerScore', 'user'],
+    });
+    if (!series) throw new NotFoundException(`ItemSeries id=${id} not found`);
+    return series;
   }
 
-  async update(id: number, updateItemSeryDto: UpdateItemSeryDto, username: string) {
-    return this.repository
-      .findOneByOrFail({ id, user: { username } })
-      .then(() => this.repository.save({ id, ...updateItemSeryDto }))
-      .catch(() => {
-        throw new NotFoundException(`Not found id=${id}`);
-      });
+  // ✅ UPDATE
+  async update(id: number, dto: UpdateItemSeryDto, user: LoggedInDto) {
+    const series = await this.itemSeriesRepo.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+    if (!series) throw new NotFoundException(`ItemSeries id=${id} not found`);
+    if (series.user.id !== user.id)
+      throw new ForbiddenException('You are not the owner of this series');
+
+    Object.assign(series, {
+      name: dto.name ?? series.name,
+      year: dto.year ?? series.year,
+      description: dto.description ?? series.description,
+      imageUrl: dto.imageUrl ?? series.imageUrl,
+      rating: dto.ratingId ? ({ id: dto.ratingId } as any) : series.rating,
+      ownerScore: dto.ownerScoreId ? ({ id: dto.ownerScoreId } as any) : series.ownerScore,
+    });
+
+    return this.itemSeriesRepo.save(series);
   }
 
-  async remove(id: number, username: string) {
-    return this.repository
-      .findOneByOrFail({ id, user: { username } })
-      .then(() => this.repository.delete({ id }))
-      .catch(() => {
-        throw new NotFoundException(`Not found: id=${id}`);
+  // ✅ DELETE
+  async remove(id: number, user: LoggedInDto) {
+    const series = await this.itemSeriesRepo.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+    if (!series) throw new NotFoundException(`ItemSeries id=${id} not found`);
+    if (series.user.id !== user.id)
+      throw new ForbiddenException('You are not the owner of this series');
+
+    await this.itemSeriesRepo.remove(series);
+    return { success: true };
+  }
+
+  // ✅ โหวต / เพิ่มคะแนนเฉลี่ยลงตาราง averages
+  async rateSeries(itemSeriesId: number, score: number, username: string) {
+    if (score < 1 || score > 5)
+      throw new BadRequestException('คะแนนต้องอยู่ระหว่าง 1 ถึง 5');
+
+    const series = await this.itemSeriesRepo.findOne({ where: { id: itemSeriesId } });
+    if (!series) throw new NotFoundException(`ItemSeries id=${itemSeriesId} not found`);
+
+    // ✅ ถ้ามีโหวตจาก user เดิมแล้วให้แก้ ไม่ให้ซ้ำ
+    const existing = await this.averageRepo.findOne({
+      where: { itemSeries: { id: itemSeriesId }, username },
+    });
+
+    if (existing) {
+      existing.score = score;
+      await this.averageRepo.save(existing);
+    } else {
+      const avg = this.averageRepo.create({
+        itemSeries: { id: itemSeriesId } as any,
+        username,
+        score,
       });
+      await this.averageRepo.save(avg);
+    }
+
+    // ✅ คำนวณ avg ใหม่จาก averages ทั้งหมดของ series นั้น
+    const all = await this.averageRepo.find({
+      where: { itemSeries: { id: itemSeriesId } },
+    });
+
+    const totalScore = all.reduce((sum, a) => sum + a.score, 0);
+    const avgScore = totalScore / all.length;
+
+    // ✅ update avg_rating / rating_count ใน item_series
+    series.avg_rating = avgScore;
+    series.rating_count = all.length;
+    await this.itemSeriesRepo.save(series);
+
+    return { success: true, avg_rating: avgScore, rating_count: all.length };
   }
 }

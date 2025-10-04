@@ -1,11 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ItemSeries } from '../../item-series/entities/item-sery.entity';
 
 @Entity('owner_scores')
-
 export class OwnerScore {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ type: 'text'})
-    name: string;
+  @Column()
+  name: string;
+
+
+  // 1 OwnerScore → N ItemSeries
+  @OneToMany(() => ItemSeries, (itemSeries) => itemSeries.ownerScore)
+  itemSeries: ItemSeries[];
 }

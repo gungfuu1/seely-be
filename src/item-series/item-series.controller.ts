@@ -1,38 +1,58 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode, Put } from '@nestjs/common';
-import { AvgrService } from './avgr.service';
-import { ItemSeriesService, paginateConfig } from './item-series.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  HttpCode,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
+import { ItemSeriesService } from './item-series.service';
 import { CreateItemSeryDto } from './dto/create-item-sery.dto';
 import { UpdateItemSeryDto } from './dto/update-item-sery.dto';
-import { ApiPaginationQuery, Paginate, PaginateQuery } from 'nestjs-paginate';
 import { JwtAuthGuard } from '@app/auth/guards/jwt.guard';
 import { LoggedInDto } from '@app/auth/dto/logged-in.dto';
 import { IdDto } from '@app/common/dto/id.dto';
-import { AvgrDto } from './dto/avgr.dto';
 
 @Controller('item-series')
 export class ItemSeriesController {
-  constructor(
-    private readonly itemSeriesService: ItemSeriesService,
-    private readonly avgrService: AvgrService,
-  ) {}
+  constructor(private readonly itemSeriesService: ItemSeriesService) {}
 
+  // ✅ สร้าง series
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() dto: CreateItemSeryDto, @Req() req: { user: LoggedInDto }) {
-    return this.itemSeriesService.create(dto, req.user.username); // ✅ ส่ง username ตรงๆ
+    return this.itemSeriesService.create(dto, req.user);
   }
 
-  @ApiPaginationQuery(paginateConfig)
+// ✅ ให้ user rate series
+  @Post(':id/rate')
+  async rateSeries(
+    @Param('id') id: number,
+    @Body('score') score: number,
+    @Body('username') username: string,
+  ) {
+    return this.itemSeriesService.rateSeries(id, score, username);
+  }
+
+  // ✅ ดึงทั้งหมดแบบ paginate
   @Get()
-  search(@Paginate() query: PaginateQuery) {
-    return this.itemSeriesService.search(query);
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.itemSeriesService.paginate(Number(page), Number(limit));
   }
 
+  // ✅ ดึง series เดียว
   @Get(':id')
   findOne(@Param() idDto: IdDto) {
     return this.itemSeriesService.findOne(idDto.id);
   }
 
+  // ✅ อัปเดต series
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
@@ -40,27 +60,14 @@ export class ItemSeriesController {
     @Body() updateItemSeryDto: UpdateItemSeryDto,
     @Req() req: { user: LoggedInDto },
   ) {
-    return this.itemSeriesService.update(
-      idDto.id,
-      updateItemSeryDto,
-      req.user.username,
-    );
+    return this.itemSeriesService.update(idDto.id, updateItemSeryDto, req.user);
   }
 
+  // ✅ ลบ series
   @HttpCode(204)
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param() idDto: IdDto, @Req() req: { user: LoggedInDto }) {
-    return this.itemSeriesService.remove(idDto.id, req.user.username);
-  }
-
-  @Put(':id/avgr')
-  @UseGuards(JwtAuthGuard)
-  async avgr(
-    @Param() idDto: IdDto,
-    @Body() avgrDto: AvgrDto,
-    @Req() req: { user: LoggedInDto },
-  ) {
-    return this.avgrService.rate(idDto.id, avgrDto, req.user);
+    return this.itemSeriesService.remove(idDto.id, req.user);
   }
 }

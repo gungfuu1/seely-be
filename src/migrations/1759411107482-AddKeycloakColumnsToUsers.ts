@@ -4,6 +4,12 @@ export class AddKeycloakColumnsToUsers1738499999999 implements MigrationInterfac
     name = 'AddKeycloakColumnsToUsers1738499999999'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+       // keycloak id
+       await queryRunner.query(`
+            ALTER TABLE "users"
+            ADD "keycloak_id" character varying(255);
+        `);
+       
         // make password nullable
         await queryRunner.query(`
             ALTER TABLE "users"

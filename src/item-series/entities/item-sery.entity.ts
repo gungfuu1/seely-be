@@ -1,15 +1,15 @@
-import { OwnerScore } from '@app/owner-score/entities/owner-score.entity';
-import { Rating } from '@app/rating/entities/rating.entity';
-import { User } from '@app/users/entities/user.entity';
 import {
-  Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Rating } from '../../rating/entities/rating.entity';
+import { OwnerScore } from '../../owner-score/entities/owner-score.entity';
+import { User } from '../../users/entities/user.entity';
 
-@Entity({ name: 'item_series' })
+@Entity('item_series')
 export class ItemSeries {
   @PrimaryGeneratedColumn()
   id: number;
@@ -20,27 +20,30 @@ export class ItemSeries {
   @Column()
   year: number;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @ManyToOne(() => Rating)
-  @JoinColumn({ name: 'rating', referencedColumnName: 'id' })
-  rating: Rating;
-
-  @ManyToOne(() => OwnerScore)
-  @JoinColumn({ name: 'ownerscore_id', referencedColumnName: 'id' })
-  ownerScore: OwnerScore;
-
-  @Column({ name: 'image_url' })
+  @Column({ name: 'image_url', nullable: true })
   imageUrl: string;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'username', referencedColumnName: 'username' })
-  user: User;
+  // FK → rating
+  @ManyToOne(() => Rating, { eager: true })
+  @JoinColumn({ name: 'rating_id' })
+  rating: Rating;
 
-  @Column({ type: 'float', default: 0 })
+  // FK → owner_scores
+  @ManyToOne(() => OwnerScore, { eager: true })
+  @JoinColumn({ name: 'owner_score_id' })
+  ownerScore: OwnerScore;
+
+  // FK → users
+  @ManyToOne(() => User, { eager: false })
+@JoinColumn({ name: 'user_id' })
+user: User;
+
+  @Column({ type: 'float', nullable: true })
   avg_rating: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', nullable: true })
   rating_count: number;
 }

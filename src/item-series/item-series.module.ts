@@ -3,12 +3,12 @@ import { ItemSeriesService } from './item-series.service';
 import { ItemSeriesController } from './item-series.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItemSeries } from './entities/item-sery.entity';
-import { AvgrService } from './avgr.service';
-import { Average } from './entities/avgr.entity';
+
+import { Average } from '../averages/entities/average.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ItemSeries, Average])],
   controllers: [ItemSeriesController],
-  providers: [ItemSeriesService, AvgrService],
+  providers: [ItemSeriesService,  Average],
 })
 export class ItemSeriesModule {}

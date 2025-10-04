@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ItemSeries } from '../../item-series/entities/item-sery.entity';
 
 @Entity('rating')
 export class Rating {
@@ -7,6 +8,11 @@ export class Rating {
 
   @Column()
   name: string;
-    @Column({ nullable: true })
-    description: string;
+
+  @Column({ nullable: true })
+  description: string;
+
+  // 1 Rating → N ItemSeries
+  @OneToMany(() => ItemSeries, (itemSeries) => itemSeries.rating)
+  itemSeries: ItemSeries[];
 }

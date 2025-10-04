@@ -1,8 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 
 export enum Role {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
+  ADMIN = 'admin',
+  USER = 'user',
 }
 
 @Entity('users')
@@ -10,33 +17,30 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    unique: true,
-    nullable: false,
-  })
+  @Column()
   username: string;
 
   @Column({ nullable: true })
-password?: string;
+  password: string;
 
   @Column({ nullable: true })
   email: string;
 
+  @Column({ name: 'first_name', nullable: true })  // ✅ map snake_case
+  firstName: string;
+
+  @Column({ name: 'last_name', nullable: true })   // ✅ map snake_case
+  lastName: string;
 
   @Column({
-    nullable: false,
+    type: 'enum',
+    enum: Role,
     default: Role.USER,
   })
   role: Role;
 
-  @Column({ name: 'keycloak_id', unique: true, nullable: true })
+  @Column({ name: 'keycloak_id', nullable: true }) // ✅ map snake_case
   keycloakId: string;
 
-  @Column({ name: 'first_name', nullable: true })
-  firstName: string;
 
-  @Column({ name: 'last_name', nullable: true })
-  lastName: string;
-
-  
 }
