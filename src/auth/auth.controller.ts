@@ -58,7 +58,7 @@ keycloakLogin() {
   const url =
     `${process.env.OAUTH2_ISSUER}/protocol/openid-connect/auth?` +
     `client_id=${client_id}&scope=${scope}&response_type=code&redirect_uri=${redirect_uri}` +
-    `&prompt=login`; // 👈 บังคับถาม login ใหม่ทุกครั้ง
+    `&prompt=login`; 
 
   return { url, statusCode: 302 };
 }
@@ -79,17 +79,17 @@ keycloakLogin() {
     // 3) save/update user
     const user = await this.authService.saveUserFromKeycloak(userInfo);
 
-    // 4) เก็บ id_token ลง cookie (สำหรับ SSO logout)
+    // 4) เก็บ id_token ลง cookie
     if (tokenResponse.id_token) {
   res.cookie('idToken', tokenResponse.id_token, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: false,   // dev เทสได้; prod ใช้ true
+    secure: false,  
     path: '/',
   });
 }
 
-    // 5) ออก internal token (HS256) แล้ว redirect กลับ FE
+    // 5) ออก internal token แล้ว redirect กลับ FE
     const internalTokens = await this.authService.generateInternalToken(userInfo);
 
     return {
@@ -101,7 +101,7 @@ keycloakLogin() {
   }
 
   // ========= Single Logout =========
-  // ใช้ GET เพื่อให้ FE นำทาง (navigate) มาที่ endpoint นี้โดยตรง
+  // ใช้ GET เพื่อให้ FE นำทาง ผู้ใช้ไปยัง URL นี้
   @Get('logout')
 async logoutGet(@Req() req: Request, @Res() res: Response) {
   const idToken = req.cookies?.idToken;

@@ -26,10 +26,10 @@ export class User {
   @Column({ nullable: true })
   email: string;
 
-  @Column({ name: 'first_name', nullable: true })  // ✅ map snake_case
+  @Column({ name: 'first_name', nullable: true })  
   firstName: string;
 
-  @Column({ name: 'last_name', nullable: true })   // ✅ map snake_case
+  @Column({ name: 'last_name', nullable: true })   
   lastName: string;
 
   @Column({
@@ -39,7 +39,7 @@ export class User {
   })
   role: Role;
 
-  @Column({ name: 'keycloak_id', nullable: true }) // ✅ map snake_case
+  @Column({ name: 'keycloak_id', nullable: true }) 
   keycloakId: string;
 
 

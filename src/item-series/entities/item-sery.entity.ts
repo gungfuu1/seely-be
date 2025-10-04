@@ -1,13 +1,8 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Rating } from '../../rating/entities/rating.entity';
 import { OwnerScore } from '../../owner-score/entities/owner-score.entity';
 import { User } from '../../users/entities/user.entity';
+import { Average } from '../../averages/entities/average.entity';
 
 @Entity('item_series')
 export class ItemSeries {
@@ -26,20 +21,20 @@ export class ItemSeries {
   @Column({ name: 'image_url', nullable: true })
   imageUrl: string;
 
-  // FK → rating
   @ManyToOne(() => Rating, { eager: true })
   @JoinColumn({ name: 'rating_id' })
   rating: Rating;
 
-  // FK → owner_scores
   @ManyToOne(() => OwnerScore, { eager: true })
   @JoinColumn({ name: 'owner_score_id' })
   ownerScore: OwnerScore;
 
-  // FK → users
-  @ManyToOne(() => User, { eager: false })
-@JoinColumn({ name: 'user_id' })
-user: User;
+  @ManyToOne(() => User, { eager: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @OneToMany(() => Average, (avg) => avg.itemSeries)
+averages: Average[];
 
   @Column({ type: 'float', nullable: true })
   avg_rating: number;

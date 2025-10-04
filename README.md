@@ -1,4 +1,4 @@
-# 📦 Project API Service
+# 📦 Project Seely (BE) Service
 
 NestJS backend service with PostgreSQL database (via Podman/Docker Compose).
 
@@ -11,6 +11,11 @@ NestJS backend service with PostgreSQL database (via Podman/Docker Compose).
 podman compose up -d
 # หรือ
 docker compose up -d
+
+# 1.5  run DATA on DB
+podman exec -it seelynest-db psql -U postgres -d seelynest -f /docker-entrypoint-initdb.d/init.sql
+#หรือ
+docker exec -it seelynest-db psql -U postgres -d seelynest -f /docker-entrypoint-initdb.d/init.sql
 ```
 
 ### 2. Install Dependencies
@@ -28,21 +33,12 @@ npm install
 
 Welcome endpoint: http://localhost:3000/api/v1
 
-Swagger API Docs: http://localhost:3000/api
+Swagger API Docs: http://localhost:3000/api/docs
 
 
 ### ⚙️ Project Structure
 
-src/app.module.ts → Root module
-
-src/app.controller.ts / src/app.service.ts → Default "Hello World" route
-
-src/item-series/ → Module สำหรับ Item Series
-
-src/users/ → Module สำหรับ Users
-
-src/avgr/ → Module สำหรับ Rating/Averages
-
+Seely Series Project by DevPool-505985
 ###
 
 # 🔑 Authentication

@@ -14,7 +14,7 @@ export class CreateItemSeryDto {
 
   @IsString()
   @IsOptional()
-  imageUrl?: string; // 👈 FE ส่ง camelCase
+  imageUrl?: string; 
 
   @IsNumber()
   @IsOptional()

@@ -5,7 +5,7 @@ import { QueryFailedError } from 'typeorm';
 @Catch()
 export class AppExceptionFilter extends BaseExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
-    // QueryFailedError
+    
     if (exception instanceof QueryFailedError) {
       const message: string = exception.message;
       if (message.includes('duplicate key value')) {
@@ -15,7 +15,7 @@ export class AppExceptionFilter extends BaseExceptionFilter {
       }
     }
 
-    // other exceptions
+    
     super.catch(exception, host);
   }
 }

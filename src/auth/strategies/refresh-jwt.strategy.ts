@@ -16,9 +16,9 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'refresh-jwt'
   async validate(payload: any): Promise<LoggedInDto> {
     console.log('Refresh JWT Payload:', payload);
 
-    // ✅ ต้อง return id ด้วยเสมอ
+    
     return {
-      id: payload.id,                 // เพิ่ม id ให้ครบ
+      id: payload.id,                 
       username: payload.username,
       role: payload.role,
       firstName: payload.firstName,

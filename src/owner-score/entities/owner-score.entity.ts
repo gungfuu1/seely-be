@@ -10,7 +10,7 @@ export class OwnerScore {
   name: string;
 
 
-  // 1 OwnerScore → N ItemSeries
+  // OwnerScore → N ItemSeries
   @OneToMany(() => ItemSeries, (itemSeries) => itemSeries.ownerScore)
   itemSeries: ItemSeries[];
 }

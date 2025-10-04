@@ -12,7 +12,7 @@ export class Rating {
   @Column({ nullable: true })
   description: string;
 
-  // 1 Rating → N ItemSeries
+  // Rating →  ItemSeries
   @OneToMany(() => ItemSeries, (itemSeries) => itemSeries.rating)
   itemSeries: ItemSeries[];
 }

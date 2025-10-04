@@ -30,7 +30,7 @@ export class AuthService {
     }
 
     const loggedInDto: LoggedInDto = {
-      id: user.id,                 // ✅ เพิ่ม id
+      id: user.id,                 
       username: user.username,
       role: user.role,
       firstName: user.firstName,
@@ -133,7 +133,7 @@ export class AuthService {
     }
 
     const loggedInDto: LoggedInDto = {
-      id: user.id,                 // ✅ เพิ่ม id
+      id: user.id,                 
       username: user.username,
       role: user.role,
       firstName: user.firstName,
@@ -182,7 +182,7 @@ export class AuthService {
     }
 
     const loggedInDto: LoggedInDto = {
-      id: user.id,                 // ✅ ใช้ id จาก DB
+      id: user.id,                
       username: user.username,
       role: user.role,
       firstName: user.firstName,

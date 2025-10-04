@@ -5,7 +5,7 @@
 -- Dumped from database version 17.6 (Debian 17.6-1.pgdg13+1)
 -- Dumped by pg_dump version 17.5
 
--- Started on 2025-10-04 15:10:40
+-- Started on 2025-10-04 22:00:24
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -342,6 +342,26 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: averages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.averages VALUES (3, 4, 24, 'kc003');
+INSERT INTO public.averages VALUES (6, 2, 23, 'kc002');
+INSERT INTO public.averages VALUES (7, 2, 24, 'kc002');
+INSERT INTO public.averages VALUES (8, 5, 23, 'kc004');
+INSERT INTO public.averages VALUES (9, 3, 25, 'kc004');
+INSERT INTO public.averages VALUES (12, 3, 28, 'kc002');
+INSERT INTO public.averages VALUES (13, 1, 27, 'kc002');
+INSERT INTO public.averages VALUES (14, 4, 30, 'kc002');
+INSERT INTO public.averages VALUES (15, 5, 31, 'kc002');
+INSERT INTO public.averages VALUES (16, 4, 41, 'kc002');
+INSERT INTO public.averages VALUES (17, 2, 34, 'kc002');
+INSERT INTO public.averages VALUES (18, 3, 32, 'kc002');
+INSERT INTO public.averages VALUES (19, 4, 40, 'kc002');
+INSERT INTO public.averages VALUES (20, 2, 36, 'kc002');
+INSERT INTO public.averages VALUES (21, 3, 42, 'kc002');
+INSERT INTO public.averages VALUES (22, 1, 46, 'kc002');
+INSERT INTO public.averages VALUES (23, 3, 44, 'kc002');
+INSERT INTO public.averages VALUES (24, 3, 35, 'kc002');
+INSERT INTO public.averages VALUES (25, 1, 38, 'kc002');
+INSERT INTO public.averages VALUES (26, 5, 37, 'kc002');
 
 
 --
@@ -350,8 +370,29 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: item_series; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.item_series VALUES (24, 'Attack on Titan', 2013, 'มนุษย์ต้องต่อสู้กับไททันเพื่อเอาชีวิตรอด', 'https://s.isanook.com/ga/0/ud/224/1123793/attack-on-titan-(1).jpg?ip/crop/w670h402/q80/jpg', 2, 2, 31, 4.8, 2);
-INSERT INTO public.item_series VALUES (23, 'Naruto Shippuden', 2008, 'เรื่องราวของนินจาหนุ่มที่มุ่งมั่นจะเป็นโฮคาเงะ', 'https://filebroker-cdn.lazada.co.th/kf/Se8ee6629f2f842bdbac8a2dc547255baM.jpg', 1, 1, 15, 4.5, 2);
+INSERT INTO public.item_series VALUES (38, 'แปลรักฉันด้วยใจเธอ', 2020, 'เรื่องราวรักอบอุ่นของเด็กหนุ่มสองคนที่ได้เรียนรู้ความรักและตัวตนของกันและกัน.', 'https://mpics.mgronline.com/pics/Images/564000005971101.JPEG', 3, 4, 31, 1, 1);
+INSERT INTO public.item_series VALUES (27, 'Breaking Bad', 2008, 'A chemistry teacher turns to making meth to secure his family’s future.', 'https://s.isanook.com/mv/0/ui/25/127397/breaking-bad-poster.jpg', 3, 5, 15, 1, 1);
+INSERT INTO public.item_series VALUES (30, 'Stranger Things', 2016, 'A group of kids uncover supernatural mysteries in a small town.', 'https://www.asiabooks.com/media/catalog/product/cache/a5ac216be58c0cbce1cb04612ece96dc/9/7/9780241806746.jpg', 2, 4, 34, 4, 1);
+INSERT INTO public.item_series VALUES (37, 'บุพเพสันนิวาส', 2018, 'เรื่องราวของหญิงสาวยุคปัจจุบันที่ย้อนเวลากลับไปในสมัยอยุธยาและพบรักกับขุนนางรูปงาม.', 'https://m.ncontentmobile.com/wordpress/wp-content/uploads/2018/02/BupPeSanNiWas-1068x661.jpg', 2, 4, 15, 5, 1);
+INSERT INTO public.item_series VALUES (33, 'The Boys', 2019, 'A group of vigilantes set out to take down corrupt superheroes.', 'https://m.media-amazon.com/images/M/MV5BMWJlN2U5MzItNjU4My00NTM2LWFjOWUtOWFiNjg3ZTMxZDY1XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 4, 5, 33, 0, 0);
+INSERT INTO public.item_series VALUES (24, 'Attack on Titan', 2013, 'มนุษย์ต้องต่อสู้กับไททันเพื่อเอาชีวิตรอด', 'https://s.isanook.com/ga/0/ud/224/1123793/attack-on-titan-(1).jpg?ip/crop/w670h402/q80/jpg', 2, 2, 31, 3, 2);
+INSERT INTO public.item_series VALUES (23, 'Naruto Shippuden', 2008, 'เรื่องราวของนินจาหนุ่มที่มุ่งมั่นจะเป็นโฮคาเงะ', 'https://filebroker-cdn.lazada.co.th/kf/Se8ee6629f2f842bdbac8a2dc547255baM.jpg', 1, 1, 15, 3.5, 2);
+INSERT INTO public.item_series VALUES (25, 'ทดสอบ0000400', 2025, 'ทดสอบ อัพเดท test2', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png', 5, 11, 34, 3, 1);
+INSERT INTO public.item_series VALUES (39, 'คดีรักข้ามภพ', 2023, 'การสืบสวนและความรักข้ามภพของอัยการหนุ่มและหญิงสาวปริศนา.', 'https://mpics.mgronline.com/pics/Images/563000011828201.JPEG', 3, 4, 33, 0, 0);
+INSERT INTO public.item_series VALUES (28, 'Money Heist', 2017, 'A criminal mastermind known as the Professor plans the biggest heist in history.', 'https://i0.wp.com/marketeeronline.co/wp-content/uploads/2021/12/%E0%B8%AB%E0%B8%B1%E0%B8%A7%E0%B8%AD%E0%B8%B4%E0%B8%99%E0%B9%82%E0%B8%9F-%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B9%80%E0%B8%9B%E0%B8%B4%E0%B8%94.jpg', 2, 4, 31, 3, 1);
+INSERT INTO public.item_series VALUES (29, 'Game of Thrones', 2010, 'Noble families vie for control of the Iron Throne in the Seven Kingdoms of Westeros.', 'https://f.ptcdn.info/887/074/000/qzptcasul7SFC5gMSpc-o.jpg', 4, 5, 33, 0, 0);
+INSERT INTO public.item_series VALUES (31, 'The Witcher', 2019, 'A mutated monster-hunter struggles to find his place in a world where people often prove more wicked than beasts.', 'https://s.isanook.com/ga/0/ud/209/1049825/the-witcher-book-seires-and-g.jpg?ip/crop/w1200h700/q80/jpg', 4, 5, 15, 5, 1);
+INSERT INTO public.item_series VALUES (34, 'Narcos', 2015, 'The true story of Colombia’s infamously violent and powerful drug cartels.', 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Narcos_season_1.png/250px-Narcos_season_1.png', 4, 4, 34, 2, 1);
+INSERT INTO public.item_series VALUES (32, 'Peaky Blinders', 2013, 'A gangster family epic set in 1919 Birmingham, England.', 'https://f.ptcdn.info/207/055/000/p12j9kevrt1ZLvFAWzd-o.jpg', 3, 4, 31, 3, 1);
+INSERT INTO public.item_series VALUES (40, 'บางกอกนฤมิต', 2018, 'ละครสยองขวัญที่เกี่ยวข้องกับโรงละครเก่าแก่ที่เต็มไปด้วยความลับ.', 'https://f.ptcdn.info/410/058/000/pb8lplgzrQO1L5gjk1-o.jpg', 4, 5, 34, 4, 1);
+INSERT INTO public.item_series VALUES (36, 'Attack on Titan', 2013, 'Humans fight for survival against giant man-eating Titans.', 'https://upload.wikimedia.org/wikipedia/en/7/73/Attack_on_Titan_%28film%29_poster.jpeg', 5, 5, 31, 2, 1);
+INSERT INTO public.item_series VALUES (35, 'The Crown', 2016, 'A biographical story about the reign of Queen Elizabeth II.', 'https://resizing.flixster.com/5I_IExysrvUmg_ks6VeewMndA7U=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p14453812_b_h9_aa.jpg', 2, 3, 15, 3, 1);
+INSERT INTO public.item_series VALUES (43, 'Vincenzo', 2021, 'ทนายความมาเฟียเกาหลีอิตาเลียนกลับมาทวงความยุติธรรมในประเทศของตน.', 'https://s.isanook.com/mv/0/ud/21/108545/vincenzos1_vertical_main_solo.jpg?ip/resize/w728/q80.jpg', 4, 5, 33, 0, 0);
+INSERT INTO public.item_series VALUES (45, 'Eternal Love (Ten Miles of Peach Blossoms)', 2017, 'ความรักเหนือภพชาติของเทพและมนุษย์ที่ต้องต่อสู้กับโชคชะตา.', 'https://crazydramastrawberry.wordpress.com/wp-content/uploads/2020/09/eternal2blove2b.png', 4, 5, 31, 0, 0);
+INSERT INTO public.item_series VALUES (41, 'Crash Landing on You', 2019, 'หญิงสาวชาวเกาหลีใต้ประสบอุบัติเหตุตกเขาและข้ามพรมแดนไปเกาหลีเหนือ จนได้พบกับนายทหารสุดหล่อ.', 'https://www.patsonic.com/wp-content/uploads/2020/01/crash-landing-on-you-featured.jpg', 3, 5, 15, 4, 1);
+INSERT INTO public.item_series VALUES (42, 'Goblin', 2016, 'เรื่องราวของก็อบลินผู้เป็นอมตะที่รอเจ้าสาวที่จะมาช่วยปลดคำสาปให้เขา.', 'https://f.ptcdn.info/621/047/000/ohim5ysfe4lYN6C43dA-o.jpg', 4, 5, 31, 3, 1);
+INSERT INTO public.item_series VALUES (46, 'The Untamed', 2019, 'เรื่องราวของสองหนุ่มนักพรตผู้ไขปริศนาและต่อสู้กับพลังมืด.', 'https://f.ptcdn.info/277/077/000/rbwpkcixl2Vq62x5KpW-o.jpg', 4, 5, 15, 1, 1);
+INSERT INTO public.item_series VALUES (44, 'My Love from the Star', 2013, 'มนุษย์ต่างดาวที่อยู่บนโลกมานานกว่า 400 ปีตกหลุมรักดาราสาวชื่อดัง.', 'https://cms.dmpcdn.com/dara/2014/09/18/c816d732-d270-4859-8208-e486e113d6ca_original.jpg', 3, 4, 34, 3, 1);
 
 
 --
@@ -407,8 +448,9 @@ INSERT INTO public.users VALUES (5, 'sl002', '$2b$10$EpM6pef1RZy4/WlcgVP4reeKmjs
 INSERT INTO public.users VALUES (6, 'sl003', '$2b$10$2Pg0a.qom2QfvuOxhleGS.bQpWuGxPGXjprV0fVzQzdJ6WBpb7Fxe', 'USER', NULL, NULL, NULL, NULL);
 INSERT INTO public.users VALUES (7, 'sl004', '$2b$10$PSWaJh7zzAGQ7KsharL8Vu26qHtREFTehrXL4S2HruFY0JDwgnA12', 'USER', NULL, NULL, NULL, NULL);
 INSERT INTO public.users VALUES (8, 'sl005', '$2b$10$fvyPmS4vbsy9f7WfEK7VxOFQH0M8J9dtv97qskXYO61mgG7R/lGDa', 'USER', NULL, NULL, NULL, NULL);
-INSERT INTO public.users VALUES (31, 'kc001', NULL, 'USER', 'b6513db7-2164-4578-af5a-6d7fd3c3c388', 'keycloak@seely.com', 'keycloak1', 'testLogin');
 INSERT INTO public.users VALUES (15, 'kc003', NULL, 'USER', 'dd3547e1-2fe6-4c40-a8f7-7d52bd5437e0', 'keycloak3@seely.com', 'keycloak3', 'testLogin');
+INSERT INTO public.users VALUES (31, 'kc001', NULL, 'USER', 'b6513db7-2164-4578-af5a-6d7fd3c3c388', 'keycloak@seely.com', 'keycloak1', 'testLogin');
+INSERT INTO public.users VALUES (34, 'kc004', '', 'user', 'ba9c82ed-f598-4bfc-ad98-aa17a9e34314', 'keycloak4@seely.com', 'keycloak4', 'testLogin');
 INSERT INTO public.users VALUES (33, 'kc002', NULL, 'USER', '51041579-8f6d-45db-985c-611ba9fe59d6', 'keycloak2@seely.com', 'keycloak1', 'testLogin');
 
 
@@ -418,7 +460,7 @@ INSERT INTO public.users VALUES (33, 'kc002', NULL, 'USER', '51041579-8f6d-45db-
 -- Name: averages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.averages_id_seq', 2, true);
+SELECT pg_catalog.setval('public.averages_id_seq', 26, true);
 
 
 --
@@ -427,7 +469,7 @@ SELECT pg_catalog.setval('public.averages_id_seq', 2, true);
 -- Name: item_series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.item_series_id_seq', 24, true);
+SELECT pg_catalog.setval('public.item_series_id_seq', 46, true);
 
 
 --
@@ -463,7 +505,7 @@ SELECT pg_catalog.setval('public.rating_id_seq', 6, true);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 33, true);
+SELECT pg_catalog.setval('public.users_id_seq', 34, true);
 
 
 --
@@ -592,7 +634,7 @@ ALTER TABLE ONLY public.averages
     ADD CONSTRAINT "FK_89b5a7f40b2dd66ef091f7eac08" FOREIGN KEY (username) REFERENCES public.users(username);
 
 
--- Completed on 2025-10-04 15:10:40
+-- Completed on 2025-10-04 22:00:24
 
 --
 -- PostgreSQL database dump complete

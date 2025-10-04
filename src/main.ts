@@ -47,7 +47,7 @@ async function bootstrap() {
     },
   });
 
-  //  add global exception filter
+  // exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AppExceptionFilter(httpAdapter));
 

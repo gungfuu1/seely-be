@@ -38,7 +38,7 @@ import { LoginLoggerMiddleware } from './middlewares/login-logger.middleware';
     AppService,
   ],
 })
-export class AppModule implements NestModule { // Add implements & config consumer
+export class AppModule implements NestModule { 
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoginLoggerMiddleware)

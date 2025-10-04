@@ -13,11 +13,11 @@ export class KeycloakService {
   ) {}
 
   async handleKeycloakLogin(userInfo: any): Promise<TokensDto> {
-    // หา user จาก DB ตาม username
+    // หา user จาก DB
     let user = await this.usersService.findByUsername(userInfo.preferred_username);
 
     if (!user) {
-      // ถ้าไม่มี -> create ใหม่
+      // ถ้าไม่มี  create ใหม่
       user = await this.usersService.create({
         username: userInfo.preferred_username,
         keycloakId: userInfo.sub,
@@ -25,10 +25,10 @@ export class KeycloakService {
         firstName: userInfo.given_name || '',
         lastName: userInfo.family_name || '',
         role: Role.USER,
-        password: '', // dummy password
+        password: '',
       } as any);
     } else {
-      // ถ้ามีอยู่แล้ว -> update
+      // ถ้ามีอยู่แล้ว  update
       user = await this.usersService.update(user.id, {
         keycloakId: userInfo.sub,
         email: userInfo.email,
@@ -41,9 +41,9 @@ export class KeycloakService {
       throw new UnauthorizedException('Failed to create or update user from Keycloak');
     }
 
-    // ✅ ต้องใส่ id ด้วย
+    
     const loggedInDto: LoggedInDto = {
-      id: user.id,                       // <<< เพิ่มตรงนี้
+      id: user.id,                       
       username: user.username,
       role: user.role,
       firstName: user.firstName,

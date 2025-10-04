@@ -14,13 +14,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any): Promise<LoggedInDto> {
-    console.log('JWT Payload (validate):', payload); // ✅ debug
-
+    console.log('JWT Payload (validate):', payload); 
     return {
-      id: payload.id,                 // ✅ เพิ่ม id กลับมา
+      id: payload.id,                 
       username: payload.username,
       role: payload.role,
-      firstName: payload.firstName,   // ✅ เพิ่มเผื่อ FE ใช้
+      firstName: payload.firstName,   
       lastName: payload.lastName,
       email: payload.email,
     };

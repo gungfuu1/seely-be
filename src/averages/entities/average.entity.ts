@@ -6,13 +6,13 @@ export class Average {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'float' })
   score: number;
 
-  @Column()
+  @Column({ nullable: false })
   username: string;
 
-  @ManyToOne(() => ItemSeries, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ItemSeries, (series) => series.averages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'item_series_id' })
   itemSeries: ItemSeries;
 }

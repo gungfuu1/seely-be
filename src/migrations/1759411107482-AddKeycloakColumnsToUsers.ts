@@ -4,31 +4,31 @@ export class AddKeycloakColumnsToUsers1738499999999 implements MigrationInterfac
     name = 'AddKeycloakColumnsToUsers1738499999999'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-       // keycloak id
+       // ปรับปรุง table users
        await queryRunner.query(`
             ALTER TABLE "users"
             ADD "keycloak_id" character varying(255);
         `);
        
-        // make password nullable
+        
         await queryRunner.query(`
             ALTER TABLE "users"
             ALTER COLUMN "password" DROP NOT NULL
         `);
 
-        // add email column (unique)
+        
         await queryRunner.query(`
             ALTER TABLE "users"
             ADD "email" character varying(255) UNIQUE
         `);
 
-        // add first_name column
+        
         await queryRunner.query(`
             ALTER TABLE "users"
             ADD "first_name" character varying(100)
         `);
 
-        // add last_name column
+        
         await queryRunner.query(`
             ALTER TABLE "users"
             ADD "last_name" character varying(100)
@@ -36,7 +36,7 @@ export class AddKeycloakColumnsToUsers1738499999999 implements MigrationInterfac
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        // rollback
+        
         await queryRunner.query(`
             ALTER TABLE "users"
             DROP COLUMN "last_name"

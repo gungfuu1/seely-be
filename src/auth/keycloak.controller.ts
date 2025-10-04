@@ -2,7 +2,7 @@ import { Controller, Get, Query, Res, UnauthorizedException } from '@nestjs/comm
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 
-@Controller('auth/callback') // 👈 ต้องใส่ prefix ให้ตรง
+@Controller('auth/callback') 
 export class KeycloakController {
   constructor(private readonly authService: AuthService) {}
 
